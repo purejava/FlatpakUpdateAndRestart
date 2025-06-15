@@ -1,1 +1,1 @@
-rootProject.name = "FlatpakUpdateAndRestart"
+rootProject.name = "flatpak-update-portal"

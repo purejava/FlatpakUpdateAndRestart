@@ -19,9 +19,11 @@ public class MessageHandler {
         this.connection = connection;
 
         if (this.connection != null) {
-            Runtime.getRuntime().addShutdownHook(new Thread(() ->
-                    this.connection.disconnect()
-            ));
+            Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+                if (this.connection.isConnected()) {
+                    this.connection.disconnect();
+                }
+            }));
         }
     }
 

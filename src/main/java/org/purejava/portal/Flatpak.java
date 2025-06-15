@@ -1,8 +1,9 @@
 package org.purejava.portal;
 
+import org.freedesktop.dbus.DBusPath;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.MethodNoReply;
-import org.freedesktop.dbus.annotations.Position;
+import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.interfaces.DBusInterface;
 import org.freedesktop.dbus.messages.DBusSignal;
 import org.freedesktop.dbus.types.UInt32;
@@ -17,22 +18,24 @@ public interface Flatpak extends DBusInterface {
     /**
      * Read-only property "version"
      */
-    UInt32 getVersion();
+    UInt32 version();
 
     /**
      * Read-only property "supports"
      */
-    UInt32 getSupports();
+    UInt32 supports();
 
     /**
      * Signal emitted when a spawned process has fully started.
      */
     class SpawnStarted extends DBusSignal {
         public final UInt32 pid;
+        public final UInt32 relPid;
 
-        public SpawnStarted(String path, UInt32 pid) throws Exception {
-            super(path, pid);
+        public SpawnStarted(String path, UInt32 pid, UInt32 relPid) throws DBusException {
+            super(path, pid, relPid);
             this.pid = pid;
+            this.relPid = relPid;
         }
     }
 
@@ -43,7 +46,7 @@ public interface Flatpak extends DBusInterface {
         public final UInt32 pid;
         public final UInt32 exitStatus;
 
-        public SpawnExited(String path, UInt32 pid, UInt32 exitStatus) throws Exception {
+        public SpawnExited(String path, UInt32 pid, UInt32 exitStatus) throws DBusException {
             super(path, pid, exitStatus);
             this.pid = pid;
             this.exitStatus = exitStatus;
@@ -59,7 +62,7 @@ public interface Flatpak extends DBusInterface {
      *
      * @see Flatpak.UpdateMonitor
      */
-    String CreateUpdateMonitor(Map<String, Variant<?>> options);
+    DBusPath CreateUpdateMonitor(Map<String, Variant<?>> options);
 
     /**
      * This method lets you start a new instance of your application, optionally enabling a tighter sandbox.
@@ -97,10 +100,9 @@ public interface Flatpak extends DBusInterface {
          * Gets emitted to indicate progress of the installation.
          */
         class Progress extends DBusSignal {
-            @Position(0)
             public final Map<String, Variant<?>> info;
 
-            public Progress(String path, Map<String, Variant<?>> info) throws Exception {
+            public Progress(String path, Map<String, Variant<?>> info) throws DBusException {
                 super(path, info);
                 this.info = info;
             }
@@ -110,8 +112,10 @@ public interface Flatpak extends DBusInterface {
          * Signal emitted when an update becomes available.
          */
         class UpdateAvailable extends DBusSignal {
-            public UpdateAvailable(String path) throws Exception {
-                super(path);
+            public final Map<String, Variant<?>> update_info;
+            public UpdateAvailable(String path, Map<String, Variant<?>> update_info) throws DBusException {
+                super(path, update_info);
+                this.update_info = update_info;
             }
         }
 

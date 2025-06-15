@@ -126,20 +126,8 @@ if (!version.toString().endsWith("-SNAPSHOT")) {
     }
 }
 
-tasks.withType<JavaCompile> {
-    options.encoding = "UTF-8"
-}
-
 tasks.withType<JavaCompile>().configureEach {
-    options.compilerArgs.add("--enable-preview")
-}
-
-tasks.withType<Test>().configureEach {
-    jvmArgs("--enable-preview")
-}
-
-tasks.withType<JavaExec>().configureEach {
-    jvmArgs("--enable-preview")
+    options.encoding = "UTF-8"
 }
 
 tasks.withType<Javadoc> {
