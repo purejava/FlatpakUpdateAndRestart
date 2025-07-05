@@ -10,7 +10,7 @@ public class Context {
 
     private static final Logger LOG = LoggerFactory.getLogger(Context.class);
 
-    private DBusConnection connection = null;
+    private static DBusConnection connection = null;
 
     public void ensureService() {
         try {

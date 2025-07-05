@@ -3,9 +3,7 @@ package org.purejava.portal;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,42 +17,39 @@ import static org.junit.jupiter.api.Assertions.assertFalse;
 class UpdatePortalTest {
 
     private static final Logger LOG = LoggerFactory.getLogger(UpdatePortalTest.class);
-    private Context context;
-    private UpdatePortal portal;
+    private static Context context;
+    private static UpdatePortal portal;
 
-    @BeforeEach
-    void setUp() {
+    @BeforeAll
+    static void setUp() {
         context = new Context();
         context.ensureService();
+        portal = new UpdatePortal();
     }
 
-    @AfterEach
-    void tearDown() {
+    @AfterAll
+    static void tearDown() {
         context.after();
         portal.close();
     }
 
     @Test
     void isAvailable() {
-        portal = new UpdatePortal();
         assertTrue(portal.isAvailable());
     }
 
     @Test
     void getVersion() {
-        portal = new UpdatePortal();
         assertTrue(portal.getVersion() >= 7);
     }
 
     @Test
     void getSupports() {
-        portal = new UpdatePortal();
         assertTrue(portal.getSupports() >= 1);
     }
 
     @Test
     void createUpdateMonitor() {
-        portal = new UpdatePortal();
         Map<String, Variant<?>> options = new HashMap<>();
         // Currently, options are not supported
         DBusExecutionException exception = assertThrows(
@@ -70,7 +65,6 @@ class UpdatePortalTest {
 
     @Test
     void checkSpawnFlags() {
-        portal = new UpdatePortal();
         int allValidFlags = 0;
 
         for (FlatpakSpawnFlag flag : FlatpakSpawnFlag.values()) {
