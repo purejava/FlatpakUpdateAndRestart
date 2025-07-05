@@ -1,6 +1,7 @@
 package org.purejava.portal;
 
 import org.freedesktop.dbus.DBusPath;
+import org.freedesktop.dbus.FileDescriptor;
 import org.freedesktop.dbus.annotations.DBusInterfaceName;
 import org.freedesktop.dbus.annotations.MethodNoReply;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -76,9 +77,9 @@ public interface Flatpak extends DBusInterface {
      * @return the PID of the new process
      */
     UInt32 Spawn(
-            List<byte[]> cwdPath,
-            List<List<byte[]>> argv,
-            Map<UInt32, Integer> fds,
+            List<Byte> cwdPath,
+            List<List<Byte>> argv,
+            Map<UInt32, FileDescriptor> fds,
             Map<String, String> envs,
             UInt32 flags,
             Map<String, Variant<?>> options

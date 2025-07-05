@@ -1,6 +1,7 @@
 package org.purejava.portal;
 
 import org.freedesktop.dbus.DBusPath;
+import org.freedesktop.dbus.FileDescriptor;
 import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.freedesktop.dbus.exceptions.DBusException;
@@ -133,7 +134,7 @@ public class UpdatePortal extends Messaging implements Flatpak {
     }
 
     public UpdateMonitor getUpdateMonitor(String dbusPath) {
-        if (varIsEmpty(dbusPath)) {
+        if (Util.varIsEmpty(dbusPath)) {
             LOG.error("Cannot retrieve UpdateMonitor as required DBusPath is missing");
             return null;
         }
@@ -168,7 +169,7 @@ public class UpdatePortal extends Messaging implements Flatpak {
      * @param options      A dictionary of update-related options.
      */
     public void updateApp(String parentWindow, UpdateMonitor monitor, Map<String, Variant<?>> options) {
-        if (varIsEmpty(parentWindow)) {
+        if (Util.varIsEmpty(parentWindow)) {
             LOG.error("Cannot update Application as required parentWindow is missing");
             return;
         }
@@ -195,13 +196,13 @@ public class UpdatePortal extends Messaging implements Flatpak {
      * @return the PID of the new process
      */
     @Override
-    public UInt32 Spawn(List<byte[]> cwdPath, List<List<byte[]>> argv, Map<UInt32, Integer> fds, Map<String, String> envs, UInt32 flags, Map<String, Variant<?>> options) {
+    public UInt32 Spawn(List<Byte> cwdPath, List<List<Byte>> argv, Map<UInt32, FileDescriptor> fds, Map<String, String> envs, UInt32 flags, Map<String, Variant<?>> options) {
         if (!isUsable()) {
             LOG.error(PORTAL_NOT_AVAILABLE);
             return null;
         }
         if (cwdPath.isEmpty()) {
-            LOG.error("Cannot start a new instance of the application as required cwdPath are missing");
+            LOG.error("Cannot start a new instance of the application as required cwdPath is missing");
             return null;
         }
         if (argv.isEmpty()) {
@@ -258,9 +259,5 @@ public class UpdatePortal extends Messaging implements Flatpak {
     @SuppressWarnings("unchecked")
     private Map<String, Variant> contentOrEmptyMap(Object[] o) {
         return null == o ? Map.of() : (Map<String, Variant>) o[0];
-    }
-
-    private boolean varIsEmpty(String v) {
-        return v == null || v.isBlank();
     }
 }

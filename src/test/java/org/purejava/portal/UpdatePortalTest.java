@@ -1,18 +1,22 @@
 package org.purejava.portal;
 
+import org.freedesktop.dbus.FileDescriptor;
 import org.freedesktop.dbus.exceptions.DBusExecutionException;
 import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.*;
 
 class UpdatePortalTest {
 
@@ -71,8 +75,33 @@ class UpdatePortalTest {
             allValidFlags |= flag.getValue();
         }
 
-        UInt32 invalidFlags = new UInt32(512);
+        var invalidFlags = new UInt32(512);
         assertTrue(portal.areFlagsValid(new UInt32(allValidFlags)));
         assertFalse(portal.areFlagsValid(invalidFlags));
+    }
+
+    @Test
+    void spawnProcessTest() throws IOException {
+        var cwdPath = Util.stringToByteList(System.getProperty("user.dir"));
+
+        List<List<Byte>> argv = List.of(Util.stringToByteList("org.purejava.App"));
+
+        Map<UInt32, FileDescriptor> fds = Collections.emptyMap();
+
+        Map<String, String> envs = Map.of();
+
+        var flags = new UInt32(0);
+
+        Map<String, Variant<?>> options = UpdatePortal.OPTIONS_DUMMY;
+
+        DBusExecutionException exception = assertThrows(
+                DBusExecutionException.class,
+                () -> portal.Spawn(cwdPath, argv, fds, envs, flags, options)
+        );
+
+        assertTrue(
+                exception.getMessage().contains("org.freedesktop.portal.Flatpak.Spawn only works in a flatpak"),
+                "Expected error message to contain: 'org.freedesktop.portal.Flatpak.Spawn only works in a flatpak'"
+        );
     }
 }
