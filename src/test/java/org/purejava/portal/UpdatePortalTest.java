@@ -116,7 +116,9 @@ class UpdatePortalTest {
             try {
                 var latestVersion = task.get();
                 assertTrue(isVersionGreaterOrEqual(latestVersion, "3.0.4"));
-            } catch (Exception _) {}
+            } catch (Exception e) {
+                LOG.error(e.toString(), e.getCause());
+            }
         }
     }
 

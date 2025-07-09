@@ -31,6 +31,7 @@ public class UpdateCheckerTask extends FutureTask<String> {
             this.checkForUpdatesRequest = HttpRequest.newBuilder()
                     .uri(uri)
                     .GET()
+                    .timeout(java.time.Duration.ofSeconds(10))
                     .build();
         }
 

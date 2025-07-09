@@ -39,10 +39,14 @@ public class UpdatePortal extends Messaging implements Flatpak {
 
     public UpdatePortal() {
         super(connection, BUS_NAME, DBUS_PATH, BUS_NAME);
-        try {
-            this.flatpak = connection.getRemoteObject(BUS_NAME, DBUS_PATH, Flatpak.class);
-        } catch (DBusException e) {
-            LOG.error(e.toString(), e.getCause());
+        if (null != connection) {
+            try {
+                this.flatpak = connection.getRemoteObject(BUS_NAME, DBUS_PATH, Flatpak.class);
+            } catch (DBusException e) {
+                LOG.error(e.toString(), e.getCause());
+            }
+        } else {
+            LOG.error("Dbus not available");
         }
     }
 
