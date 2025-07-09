@@ -7,14 +7,16 @@ import org.freedesktop.dbus.types.Variant;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.purejava.portal.rest.UpdateCheckerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -81,7 +83,7 @@ class UpdatePortalTest {
     }
 
     @Test
-    void spawnProcessTest() throws IOException {
+    void spawnProcess() {
         var cwdPath = Util.stringToByteList(System.getProperty("user.dir"));
 
         List<List<Byte>> argv = List.of(Util.stringToByteList("org.purejava.App"));
@@ -103,5 +105,35 @@ class UpdatePortalTest {
                 exception.getMessage().contains("org.freedesktop.portal.Flatpak.Spawn only works in a flatpak"),
                 "Expected error message to contain: 'org.freedesktop.portal.Flatpak.Spawn only works in a flatpak'"
         );
+    }
+
+    @Test
+    void restAPI() {
+        String appId = "org.gimp.GIMP";
+        try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
+            var task = new UpdateCheckerTask(appId);
+            executor.submit(task);
+            try {
+                var latestVersion = task.get();
+                assertTrue(isVersionGreaterOrEqual(latestVersion, "3.0.4"));
+            } catch (Exception _) {}
+        }
+    }
+
+    public static boolean isVersionGreaterOrEqual(String v1, String v2) {
+        String[] parts1 = v1.split("\\.");
+        String[] parts2 = v2.split("\\.");
+
+        int length = Math.max(parts1.length, parts2.length);
+
+        for (int i = 0; i < length; i++) {
+            int p1 = i < parts1.length ? Integer.parseInt(parts1[i]) : 0;
+            int p2 = i < parts2.length ? Integer.parseInt(parts2[i]) : 0;
+
+            if (p1 < p2) return false;
+            if (p1 > p2) return true;
+        }
+
+        return true;
     }
 }

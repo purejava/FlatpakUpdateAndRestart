@@ -25,6 +25,7 @@ repositories {
 }
 
 dependencies {
+    api(libs.com.fasterxml.jackson.core)
     api(libs.com.github.hypfvieh.dbus.java.core)
     api(libs.com.github.hypfvieh.dbus.java.transport.native.unixsocket)
     api(libs.org.slf4j.slf4j.api)
