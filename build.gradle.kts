@@ -1,8 +1,6 @@
-import net.thebugmc.gradle.sonatypepublisher.PublishingType.*
-
 plugins {
     id("java-library")
-    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
+    id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
     id("maven-publish")
     id("signing")
 }
@@ -21,6 +19,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -83,38 +82,13 @@ publishing {
     }
 }
 
-centralPortal {
-    publishingType.set(USER_MANAGED)
-
-    username.set(sonatypeUsername)
-    password.set(sonatypePassword)
-
-    // Configure POM metadata
-    pom {
-        name.set("FlatpakUpdateAndRestart")
-        description.set("A Java library for updating Flatpak apps.")
-        url.set("https://github.com/purejava/FlatpakUpdateAndRestart")
-        licenses {
-            license {
-                name.set("MIT License")
-                url.set("https://opensource.org/licenses/MIT")
-            }
-        }
-        developers {
-            developer {
-                id.set("purejava")
-                name.set("Ralph Plawetzki")
-                email.set("ralph@purejava.org")
-            }
-        }
-        scm {
-            connection.set("scm:git:git://github.com/purejava/FlatpakUpdateAndRestart.git")
-            developerConnection.set("scm:git:ssh://github.com/purejava/FlatpakUpdateAndRestart.git")
-            url.set("https://github.com/purejava/FlatpakUpdateAndRestart/tree/main")
-        }
-        issueManagement {
-            system.set("GitHub Issues")
-            url.set("https://github.com/FlatpakUpdateAndRestart/issues")
+nexusPublishing {
+    repositories {
+        sonatype {
+            nexusUrl.set(uri("https://s01.oss.sonatype.org/service/local/"))
+            snapshotRepositoryUrl.set(uri("https://s01.oss.sonatype.org/content/repositories/snapshots/"))
+            username.set(sonatypeUsername)
+            password.set(sonatypePassword)
         }
     }
 }
