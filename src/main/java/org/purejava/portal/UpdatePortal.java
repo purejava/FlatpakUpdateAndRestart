@@ -9,12 +9,15 @@ import org.freedesktop.dbus.interfaces.DBus;
 import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
 import org.purejava.portal.freedesktop.dbus.handlers.Messaging;
+import org.purejava.portal.rest.UpdateCheckerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class UpdatePortal extends Messaging implements Flatpak {
 
@@ -125,7 +128,6 @@ public class UpdatePortal extends Messaging implements Flatpak {
      *
      * @param options Vardict with optional further information.
      * @return Object path for the org.freedesktop.portal.Flatpak.UpdateMonitor object.
-     *
      * @see Flatpak.UpdateMonitor
      */
     @Override
@@ -230,6 +232,26 @@ public class UpdatePortal extends Messaging implements Flatpak {
             flatpak.SpawnSignal(pid, signal, toProcessGroup);
         }
         LOG.error(PORTAL_NOT_AVAILABLE);
+    }
+
+    /**
+     * Executes a REST call in a different thread to get the latest release version
+     * for the given app.
+     *
+     * @param appName The app to be checked.
+     * @return The latest release version, or <code>null</code>, if something goes wrong.
+     */
+    public String getlatestReleaseFor(String appName) {
+        try {
+            try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
+                var task = new UpdateCheckerTask(appName);
+                executor.submit(task);
+                return task.get();
+            }
+        } catch (Exception e) {
+            LOG.error(e.toString(), e.getCause());
+            return null;
+        }
     }
 
     @Override
