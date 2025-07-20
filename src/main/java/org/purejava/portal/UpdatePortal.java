@@ -16,8 +16,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 public class UpdatePortal extends Messaging implements Flatpak {
 
@@ -29,6 +27,7 @@ public class UpdatePortal extends Messaging implements Flatpak {
     private static DBusConnection connection;
 
     private Flatpak flatpak = null;
+    private UpdateCheckerTask task;
 
     static {
         try {
@@ -158,6 +157,8 @@ public class UpdatePortal extends Messaging implements Flatpak {
 
     /**
      * Ends the update monitoring and cancels any ongoing installation.
+     *
+     * @param monitor The UpdateMonitor to be ended.
      */
     public void cancelUpdateMonitor(UpdateMonitor monitor) {
         if (null == monitor) {
@@ -234,22 +235,39 @@ public class UpdatePortal extends Messaging implements Flatpak {
         LOG.error(PORTAL_NOT_AVAILABLE);
     }
 
-    /**
-     * Executes a REST call in a different thread to get the latest release version
-     * for the given app.
-     *
-     * @param appName The app to be checked.
-     * @return The latest release version, or <code>null</code>, if something goes wrong.
-     */
-    public String getlatestReleaseFor(String appName) {
-        try {
-            try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
-                var task = new UpdateCheckerTask(appName);
-                executor.submit(task);
-                return task.get();
-            }
-        } catch (Exception e) {
-            LOG.error(e.toString(), e.getCause());
+    public void setUpdateCheckerTaskFor(String appName) {
+        task = new UpdateCheckerTask(appName);
+    }
+
+    public String getAppId(String appName) {
+        if (Util.varIsEmpty(appName)) {
+            LOG.error("Cannot get appName of task as required appName is missing'");
+            return null;
+        }
+        return task.getAppId();
+    }
+
+    public boolean isAppId(String appName) {
+        if (Util.varIsEmpty(appName)) {
+            LOG.error("Cannot check appName of task as required appName is missing'");
+            return false;
+        }
+        return appName.equals(getAppId(appName));
+    }
+
+    public UpdateCheckerTask getUpdateCheckerTaskFor(String appName) {
+        if (Util.varIsEmpty(appName)) {
+            LOG.error("Cannot lookup UpdateCheckerTask as required appName is missing'");
+            return null;
+        }
+        if (null == task) {
+            LOG.error("Cannot lookup UpdateCheckerTask as task wasn't set before, use 'setUpdateCheckerTaskFor'");
+            return null;
+        }
+        if (isAppId(appName)) {
+            return task;
+        } else {
+            LOG.error("No UpdateCheckerTask found for appName: {}", appName);
             return null;
         }
     }

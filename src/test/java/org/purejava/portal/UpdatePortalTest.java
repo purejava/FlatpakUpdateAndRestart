@@ -7,7 +7,6 @@ import org.freedesktop.dbus.types.Variant;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.purejava.portal.rest.UpdateCheckerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -15,8 +14,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicReference;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -108,21 +108,31 @@ class UpdatePortalTest {
     }
 
     @Test
-    void restAPI() {
+    void restAPI() throws InterruptedException {
         String appId = "org.gimp.GIMP";
-        try (ExecutorService executor = Executors.newFixedThreadPool(10)) {
-            var task = new UpdateCheckerTask(appId);
-            executor.submit(task);
-            try {
-                var latestVersion = task.get();
-                assertTrue(isVersionGreaterOrEqual(latestVersion, "3.0.4"));
-            } catch (Exception e) {
-                LOG.error(e.toString(), e.getCause());
-            }
-        }
+        CountDownLatch latch = new CountDownLatch(1);
+        AtomicReference<String> versionResult = new AtomicReference<>();
+
+        portal.setUpdateCheckerTaskFor(appId);
+        var task = portal.getUpdateCheckerTaskFor(appId);
+
+        task.setOnSucceeded(version -> {
+            versionResult.set(version);
+            latch.countDown();
+        });
+
+        task.setOnFailed(error -> {
+            fail("Expected success but failed: " + error.getMessage());
+            latch.countDown();
+        });
+
+        task.start();
+        assertTrue(latch.await(5, TimeUnit.SECONDS), "Task timed out");
+
+        assertTrue(isVersionGreaterOrEqual(versionResult.get(), "3.0.4"));
     }
 
-    public static boolean isVersionGreaterOrEqual(String v1, String v2) {
+    private static boolean isVersionGreaterOrEqual(String v1, String v2) {
         String[] parts1 = v1.split("\\.");
         String[] parts2 = v2.split("\\.");
 
