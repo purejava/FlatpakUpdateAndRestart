@@ -6,5 +6,6 @@ module org.purejava.portal {
     requires com.fasterxml.jackson.databind;
 
     exports org.purejava.portal;
+    exports org.purejava.portal.rest;
     exports org.purejava.portal.freedesktop.dbus.handlers;
 }
