@@ -97,6 +97,7 @@ nexusPublishing {
 }
 
 githubRelease {
+    repo = "FlatpakUpdateAndRestart"
     token(releaseGradlePluginToken)
     tagName = project.version.toString()
     releaseName = project.version.toString()
