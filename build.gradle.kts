@@ -1,6 +1,8 @@
 plugins {
     id("java-library")
     id("io.github.gradle-nexus.publish-plugin") version "2.0.0"
+    id("net.thebugmc.gradle.sonatype-central-portal-publisher") version "1.2.4"
+    id("com.github.breadmoirai.github-release") version "2.5.2"
     id("maven-publish")
     id("signing")
 }
@@ -9,6 +11,7 @@ group = "org.purejava"
 version = "1.0-SNAPSHOT"
 description = "A Java library for updating Flatpak apps."
 
+val releaseGradlePluginToken: String = System.getenv("RELEASE_GRADLE_PLUGIN_TOKEN") ?: ""
 val sonatypeUsername: String = System.getenv("SONATYPE_USERNAME") ?: ""
 val sonatypePassword: String = System.getenv("SONATYPE_PASSWORD") ?: ""
 
@@ -91,6 +94,15 @@ nexusPublishing {
             password.set(sonatypePassword)
         }
     }
+}
+
+githubRelease {
+    token(releaseGradlePluginToken)
+    tagName = project.version.toString()
+    releaseName = project.version.toString()
+    targetCommitish = "main"
+    draft = true
+    generateReleaseNotes = true
 }
 
 if (!version.toString().endsWith("-SNAPSHOT")) {
