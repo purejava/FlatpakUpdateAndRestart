@@ -8,7 +8,7 @@ plugins {
 }
 
 group = "org.purejava"
-version = "1.0.0"
+version = "1.0.1-SNAPSHOT"
 description = "A Java library for updating Flatpak apps."
 
 val releaseGradlePluginToken: String = System.getenv("RELEASE_GRADLE_PLUGIN_TOKEN") ?: ""
