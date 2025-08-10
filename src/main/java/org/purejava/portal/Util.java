@@ -9,7 +9,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 public class Util {
-    private static final Logger LOG = LoggerFactory.getLogger(UpdatePortal.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Util.class);
 
     public static List<Byte> stringToByteList(String str) {
         if (varIsEmpty(str)) {

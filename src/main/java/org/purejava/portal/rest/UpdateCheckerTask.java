@@ -40,7 +40,7 @@ public class UpdateCheckerTask {
             if (!delay.isZero()) {
                 try {
                     Thread.sleep(delay.toMillis());
-                } catch (InterruptedException e) {
+                } catch (InterruptedException _) {
                     Thread.currentThread().interrupt();
                     return;
                 }
