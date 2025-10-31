@@ -12,7 +12,7 @@ Add `flatpak-update-portal` as a dependency to your project.
 
 ## Gradle
 ```gradle
-implementation group: 'org.purejava', name: 'flatpak-update-portal', version: '1.0.0'
+implementation group: 'org.purejava', name: 'flatpak-update-portal', version: '1.1.0'
 ```
 ## Maven
 
@@ -20,7 +20,7 @@ implementation group: 'org.purejava', name: 'flatpak-update-portal', version: '1
 <dependency>
    <groupId>org.purejava</groupId>
    <artifactId>flatpak-update-portal</artifactId>
-   <version>1.0.0</version>
+   <version>1.1.0</version>
 </dependency>
 ```
 
