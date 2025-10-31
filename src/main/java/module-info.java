@@ -7,5 +7,4 @@ module org.purejava.portal {
 
     exports org.purejava.portal;
     exports org.purejava.portal.rest;
-    exports org.purejava.portal.freedesktop.dbus.handlers;
 }

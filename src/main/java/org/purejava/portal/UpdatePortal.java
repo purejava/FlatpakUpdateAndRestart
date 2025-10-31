@@ -6,9 +6,9 @@ import org.freedesktop.dbus.connections.impl.DBusConnection;
 import org.freedesktop.dbus.connections.impl.DBusConnectionBuilder;
 import org.freedesktop.dbus.exceptions.DBusException;
 import org.freedesktop.dbus.interfaces.DBus;
+import org.freedesktop.dbus.interfaces.Properties;
 import org.freedesktop.dbus.types.UInt32;
 import org.freedesktop.dbus.types.Variant;
-import org.purejava.portal.freedesktop.dbus.handlers.Messaging;
 import org.purejava.portal.rest.UpdateCheckerTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,7 +17,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public class UpdatePortal extends Messaging implements Flatpak {
+public class UpdatePortal implements Flatpak {
 
     public static final Map<String, Variant<?>> OPTIONS_DUMMY = new HashMap<>();
     private static final Logger LOG = LoggerFactory.getLogger(UpdatePortal.class);
@@ -27,6 +27,7 @@ public class UpdatePortal extends Messaging implements Flatpak {
     private static DBusConnection connection;
 
     private Flatpak flatpak = null;
+    private Properties properties = null;
     private UpdateCheckerTask task;
 
     static {
@@ -40,10 +41,10 @@ public class UpdatePortal extends Messaging implements Flatpak {
     }
 
     public UpdatePortal() {
-        super(connection, BUS_NAME, DBUS_PATH, BUS_NAME);
         if (null != connection) {
             try {
                 this.flatpak = connection.getRemoteObject(BUS_NAME, DBUS_PATH, Flatpak.class);
+                this.properties = connection.getRemoteObject(BUS_NAME, DBUS_PATH, Properties.class);
             } catch (DBusException e) {
                 LOG.error(e.toString(), e.getCause());
             }
@@ -87,8 +88,8 @@ public class UpdatePortal extends Messaging implements Flatpak {
             LOG.error(PORTAL_NOT_AVAILABLE);
             return null;
         }
-        var response = getProperty("version");
-        return null == response ? null : (UInt32) response.getValue();
+        var response = properties.Get(BUS_NAME, "version");
+        return null == response ? null : (UInt32) response;
     }
 
     /**
@@ -107,8 +108,8 @@ public class UpdatePortal extends Messaging implements Flatpak {
             LOG.error(PORTAL_NOT_AVAILABLE);
             return null;
         }
-        var response = getProperty("supports");
-        return null == response ? null : (UInt32) response.getValue();
+        var response = properties.Get(BUS_NAME, "supports");
+        return null == response ? null : (UInt32) response;
     }
 
     /**
@@ -272,7 +273,6 @@ public class UpdatePortal extends Messaging implements Flatpak {
         }
     }
 
-    @Override
     public String getDBusPath() {
         return DBUS_PATH;
     }
