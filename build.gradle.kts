@@ -23,6 +23,7 @@ java {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
 }
 
@@ -131,16 +132,28 @@ githubRelease {
     generateReleaseNotes = true
 }
 
-if (!version.toString().endsWith("-SNAPSHOT")) {
-    signing {
-        useGpgCmd()
-        sign(configurations.runtimeElements.get())
-        sign(publishing.publications["mavenJava"])
-    }
+tasks.named("publishCentralPortalPublicationToMavenLocal") {
+    dependsOn("signMavenJavaPublication")
+}
+
+tasks.named("publishMavenJavaPublicationToMavenLocal") {
+    dependsOn("signCentralPortalPublication")
+}
+
+signing {
+    useGpgCmd()
+    sign(configurations.runtimeElements.get())
+    sign(publishing.publications["mavenJava"])
 }
 
 tasks.withType<JavaCompile>().configureEach {
     options.encoding = "UTF-8"
+}
+
+tasks.withType<PublishToMavenLocal>().configureEach {
+    if (publication.name == "centralPortal") {
+        enabled = false
+    }
 }
 
 tasks.withType<Javadoc> {
