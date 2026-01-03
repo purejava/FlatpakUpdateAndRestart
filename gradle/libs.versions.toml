@@ -5,9 +5,10 @@
 com-fasterxml-jackson-core = "2.19.2"
 com-github-hypfvieh-dbus-java-core = "5.1.1"
 com-github-hypfvieh-dbus-java-transport-native-unixsocket = "5.1.1"
-org-junit-jupiter-junit-jupiter = "5.13.4"
-org-junit-jupiter-junit-jupiter-api = "5.13.4"
-org-junit-jupiter-junit-jupiter-engine = "5.13.4"
+org-junit-jupiter-junit-jupiter = "6.0.1"
+org-junit-jupiter-junit-jupiter-api = "6.0.1"
+org-junit-jupiter-junit-jupiter-engine = "6.0.1"
+org-junit-platform-junit-platform-launcher = "6.0.1"
 org-slf4j-slf4j-api = "2.0.17"
 org-slf4j-slf4j-simple = "2.0.17"
 
@@ -18,6 +19,6 @@ com-github-hypfvieh-dbus-java-transport-native-unixsocket = { module = "com.gith
 org-junit-jupiter-junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "org-junit-jupiter-junit-jupiter" }
 org-junit-jupiter-junit-jupiter-api = { module = "org.junit.jupiter:junit-jupiter-api", version.ref = "org-junit-jupiter-junit-jupiter-api" }
 org-junit-jupiter-junit-jupiter-engine = { module = "org.junit.jupiter:junit-jupiter-engine", version.ref = "org-junit-jupiter-junit-jupiter-engine" }
-org-junit-platform-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+org-junit-platform-junit-platform-launcher = { module = "org.junit.platform:junit-platform-launcher", version.ref = "org-junit-platform-junit-platform-launcher" }
 org-slf4j-slf4j-api = { module = "org.slf4j:slf4j-api", version.ref = "org-slf4j-slf4j-api" }
 org-slf4j-slf4j-simple = { module = "org.slf4j:slf4j-simple", version.ref = "org-slf4j-slf4j-simple" }
