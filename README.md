@@ -5,7 +5,7 @@
 [![Maven Central](https://img.shields.io/maven-central/v/org.purejava/flatpak-update-portal.svg?label=Maven%20Central)](https://central.sonatype.com/search?q=flatpak-update-portal&smo=true&namespace=org.purejava)
 [![License](https://img.shields.io/github/license/purejava/FlatpakUpdateAndRestart.svg)](https://github.com/purejava/FlatpakUpdateAndRestart/blob/main/LICENSE)
 
-A Java library that gives you access to flatpak on the host to the sandbox over DBus. For example, it allows you to update your application, restart it and more.
+A Java library for updating Flatpak apps, restart them and more.
 
 # Dependency
 Add `flatpak-update-portal` as a dependency to your project.
