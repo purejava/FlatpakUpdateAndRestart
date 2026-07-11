@@ -17,7 +17,9 @@ val sonatypeUsername: String = System.getenv("SONATYPE_USERNAME") ?: ""
 val sonatypePassword: String = System.getenv("SONATYPE_PASSWORD") ?: ""
 
 java {
-    java.sourceCompatibility = JavaVersion.VERSION_24
+        toolchain {
+        languageVersion = JavaLanguageVersion.of(24)
+    }
     withSourcesJar()
     withJavadocJar()
 }
