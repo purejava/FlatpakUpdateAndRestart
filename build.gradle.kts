@@ -18,7 +18,7 @@ val sonatypePassword: String = System.getenv("SONATYPE_PASSWORD") ?: ""
 
 java {
         toolchain {
-        languageVersion = JavaLanguageVersion.of(24)
+        languageVersion = JavaLanguageVersion.of(25)
     }
     withSourcesJar()
     withJavadocJar()
